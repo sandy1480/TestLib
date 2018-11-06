@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      var pdfChunks = [];
+      socket.on('sendPDF', function(chunk)
+        {
+          pdfChunks.push(chunk);
+          pdf = document.createElement('a');
+          var url = window.URL.createObjectURL(new Blob([chunk],{type: "application/pdf;base64"}));
+          pdf.href = url;
+          pdf.setAttribute('download', 'report.pdf');
+          pdf.style.display = 'none';
+          document.body.appendChild(pdf);
+          pdf.href = url;
+          pdf.click();
+        });
+     </script>
+    </head>
+  <body>
+    <h1>Available Reports</h1>
+ <body>
+</html>
