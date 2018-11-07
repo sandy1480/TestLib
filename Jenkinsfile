@@ -15,12 +15,4 @@ node {
 
         app = docker.build("my-app:${env.BUILD_ID}")
     }
-
-    stage('*** Test Image ***') {
-        /* Ideally, we would run a test framework against our image.
-
-        app.inside {
-            sh 'echo "Tests Passed"'
-        }
-    }    
 }
