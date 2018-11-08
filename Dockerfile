@@ -19,6 +19,6 @@ COPY . /usr/src/app
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD curl -sS 35.178.213.196:3000 || exit 1
+HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD curl -sS http://35.178.213.196:3000 || exit 1
 
 CMD [ "npm", "start" ]
