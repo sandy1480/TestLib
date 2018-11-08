@@ -1,12 +1,5 @@
-FROM node:8
+MAINTAINER sandy1480@gmail.com
 
-# Install node/npm
-RUN apt-get -y update  && \
-        apt-get install -y curl && \
-        curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
-        apt-get install -y nodejs
-
-# Install mysql, the driver for MYSQL Server for Node.js
 RUN npm install mysql
 
 # Create app directory
@@ -24,5 +17,7 @@ RUN npm install
 COPY . /usr/src/app
 
 EXPOSE 3000
+
+HEALTHCHECK --interval=5s --timeout=10s --retries=3 CMD curl -sS 127.0.0.1 || exit 1
 
 CMD [ "npm", "start" ]
