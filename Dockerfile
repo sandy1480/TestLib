@@ -1,5 +1,5 @@
 
-FROM NODE:8
+FROM node:8
 
 # Install MySQL Driver to connect to Nodejs
 RUN npm install mysql
