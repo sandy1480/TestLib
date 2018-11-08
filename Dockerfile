@@ -1,5 +1,6 @@
 MAINTAINER sandy1480@gmail.com
 
+# Install MySQL Driver to connect to Nodejs
 RUN npm install mysql
 
 # Create app directory
