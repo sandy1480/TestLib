@@ -61,7 +61,7 @@ function getReport(user_id)
 {
   var mysql = require('mysql')
   var connection = mysql.createConnection({
-  host     : 'ec2-35-178-199-197.eu-west-2.compute.amazonaws.com',
+  host     : 'ec2-35-178-213-196.eu-west-2.compute.amazonaws.com',
   user     : 'TestUser',
   password : 'PassWord',
   database : 'ninja_assignment2'
