@@ -11,6 +11,7 @@ RUN apt-get -y update  && \
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+RUN npm set strict-ssl false
 # Install app dependencies
 COPY package*.json /usr/src/app/
 RUN npm install
