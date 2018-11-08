@@ -1,4 +1,5 @@
-MAINTAINER sandy1480@gmail.com
+
+FROM NODE:8
 
 # Install MySQL Driver to connect to Nodejs
 RUN npm install mysql
