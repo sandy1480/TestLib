@@ -1,24 +1,47 @@
 <html>
   <head>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io();
-      var pdfChunks = [];
-      socket.on('sendPDF', function(chunk)
-        {
-          pdfChunks.push(chunk);
-          pdf = document.createElement('a');
-          var url = window.URL.createObjectURL(new Blob([chunk],{type: "application/pdf;base64"}));
-          pdf.href = url;
-          pdf.setAttribute('download', 'report.pdf');
-          pdf.style.display = 'none';
-          document.body.appendChild(pdf);
-          pdf.href = url;
-          pdf.click();
+    <title>Available Basic Report</title>
+    <%- include('common/head'); %>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        // Socket Objects
+        var socket = io();
+        var pdfChunks = [];
+
+        // Socket Functions
+        socket.emit('availableReports',function(){
+          console.log("Reports available to user");
         });
-     </script>
+        socket.on('sendPDF', function(chunk){
+            pdfChunks.push(chunk);
+            var url = window.URL.createObjectURL(new Blob([chunk],{type: "application/pdf;base64"}));
+            renderAvailableReports(url);
+        });
+        // Render PDF link
+        function renderAvailableReports(url){
+            // HTML DOM Objects
+            var pdf_ul = document.getElementById('list');
+            var pdf_li = document.createElement("li");
+            var link   = document.createElement("a");
+
+            link.href = url;
+            link.setAttribute('download', 'report.pdf');
+            link.innerHTML = "View Report";
+            pdf_li.appendChild(link);
+            pdf_ul.appendChild(pdf_li);
+            // remove link
+            pdf_ul.onclick= function() {
+              pdf_ul.removeChild(pdf_li);
+            };
+          }          
+        </script>
     </head>
   <body>
-    <h1>Available Reports</h1>
+    <%- include('common/header'); %>
+    <div class="container">
+      <h1>Available Reports</h1>
+      <ul id="list" onclick="RemoveReport(id);"></ul>
+    </div>
+    <%- include('common/footer'); %>
  <body>
 </html>
