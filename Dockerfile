@@ -8,7 +8,7 @@ RUN apt-get -y update  && \
 
 RUN npm set strict-ssl false
 # Install app dependencies
-COPY package*.json
+COPY . package*.json
 
 RUN npm install
 
