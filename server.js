@@ -20,11 +20,12 @@ var user_id;
 var filename = '';
 
 
-// socket module
+// Socket module
 io.on('connection', function(socket){
       socket.on('transferPDF',function(data)
       {
           // hard-coded value to be removed
+          console.log("transferPDF in server");
           user_id = data[1];
           if (data[0] == true)
           {
@@ -33,24 +34,33 @@ io.on('connection', function(socket){
             shareReport = data[0];
           }
       });
-      if (shareReport == true)
-      {
-        var readStream = fs.ReadStream(path.resolve(__dirname + '/pdf/empReport'+user_id+'.pdf'));
-        var PDFArray = [], delay = 0;
-        readStream.on('readable', function(){
-          console.log("PDF Loading")
-        });
-        readStream.on('data',function(chunk)
+      // Available Reports
+      socket.on('availableReports', function()
         {
-          PDFArray.push(chunk);
-          socket.emit("sendPDF",chunk);
+          if (shareReport == true)
+          {
+            var readStream = fs.ReadStream(path.resolve(__dirname + '/pdf/empReport'+user_id+'.pdf'));
+            var PDFArray = [], delay = 0;
+            readStream.on('readable', function(){
+              console.log("PDF Loading")
+            });
+            readStream.on('data',function(chunk)
+            {
+              PDFArray.push(chunk);
+              socket.emit("sendPDF",chunk);
+            });
+            readStream.on('end',function() {
+              console.log("PDF loaded");
+            });
+            // clear data
+            shareReport = false;
+          }
         });
-        readStream.on('end',function() {
-          console.log("PDF loaded");
+        // disconnect after sharing pdf
+        socket.on('disconnect', function(){
+          console.log('socket disconnected');
         });
-      }
 });
-
 
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
