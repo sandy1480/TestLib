@@ -25,7 +25,6 @@ io.on('connection', function(socket){
       socket.on('transferPDF',function(data)
       {
           // hard-coded value to be removed
-          console.log("transferPDF in server");
           user_id = data[1];
           if (data[0] == true)
           {
