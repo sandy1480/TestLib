@@ -4,7 +4,7 @@ FROM node:8
 RUN apt-get -y update  && \
         apt-get install -y curl && \
         curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
-        apt-get install -y nodejs
+        apt-get install -y nodejs-legacy
 
 # Install mysql, the driver for MYSQL Server for Node.js
 RUN npm install mysql
@@ -16,7 +16,7 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package*.json /usr/src/app/
 
-RUN npm install -g phantomjs-prebuilt --unsafe-perm
+RUN npm install phantomjs-prebuilt
 
 RUN npm install
 
