@@ -9,6 +9,8 @@ RUN apt-get -y update  && \
 # Install mysql, the driver for MYSQL Server for Node.js
 RUN npm install mysql
 
+RUN npm install phantomjs-prebuilt
+
 # Create app directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -16,7 +18,6 @@ WORKDIR /usr/src/app
 # Install app dependencies
 COPY package*.json /usr/src/app/
 
-RUN npm install phantomjs-prebuilt
 
 RUN npm install
 
