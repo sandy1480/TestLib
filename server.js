@@ -31,7 +31,7 @@ function currentTime()
 }
 
 io.on('connection', function(socket){
-  //console.log('connected?')
+  console.log('connected?')
   socket.on('pdf_Report_Sharing', function(pdfName){
       // hard-coded value to be removed
       //var d = new Date();
