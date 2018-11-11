@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Report Sharing</title>
+    <%- include('common/head'); %>
+    <script src="/public/scripts/socket.io-1.2.0.js"></script>
+    <script src="/public/scripts/jquery.min.js"></script>
+  </head>
+  <body>
+      <%- include('common/header'); %>
+      <div class="container"">
+          <div class="panel panel-default">
+              <div class="panel-heading">Available PDFs</div>
+              <div class="panel-body" id="availableReports">
+              </div>
+            </div>          
+        </div>
+    <script>
+      $(function () {
+        var socket = io();
+        socket.on('pdf_Report_Sharing', function(pdfName){
+          $('#availableReports').append(pdfName);
+          window.scrollTo(0, document.body.scrollHeight);
+        });
+      });
+    </script>
+    <%- include('common/footer'); %>
+  </body>
+</html>

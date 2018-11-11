@@ -1,4 +1,9 @@
-// import modules
+/*var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var port = process.env.PORT || 3000;
+*/
+
 var express = require("express");
 var app     = express();
 var path    = require("path");
@@ -8,113 +13,88 @@ var fs      = require('fs');
 var path    = require('path');
 var server  = require('http').Server(app);
 var io      = require('socket.io')(server);
-server.listen(3000);
-
-// routes & DB
-var routes  = require('./routes/routes');
-var db = require('./db');
-
-// Session variables
-var shareReport = false;
-var user_id;
-var filename = '';
-
-
-// Socket module
-io.on('connection', function(socket){
-      socket.on('transferPDF',function(data)
-      {
-          // hard-coded value to be removed
-          user_id = data[1];
-          if (data[0] == true)
-          {
-            getReport(user_id);
-            // hard-coded value to be removed
-            shareReport = data[0];
-          }
-      });
-      // Available Reports
-      socket.on('availableReports', function()
-        {
-          if (shareReport == true)
-          {
-            var readStream = fs.ReadStream(path.resolve(__dirname + '/pdf/empReport'+user_id+'.pdf'));
-            var PDFArray = [], delay = 0;
-            readStream.on('readable', function(){
-              console.log("PDF Loading")
-            });
-            readStream.on('data',function(chunk)
-            {
-              PDFArray.push(chunk);
-              socket.emit("sendPDF",chunk);
-            });
-            readStream.on('end',function() {
-              console.log("PDF loaded");
-            });
-            // clear data
-            shareReport = false;
-          }
-        });
-        // disconnect after sharing pdf
-        socket.on('disconnect', function(){
-          console.log('socket disconnected');
-        });
-});
+var port = process.env.PORT || 3000;
 
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
+
+var routes  = require('./routes/routes');
+var db = require('./db');
 app.use('/public', express.static(path.join(__dirname, 'public')))
 app.use('/', routes);
 
-function getReport(user_id)
+function currentTime()
 {
-  var mysql = require('mysql')
-  var connection = mysql.createConnection({
-  host     : 'ec2-35-178-213-196.eu-west-2.compute.amazonaws.com',
-  user     : 'TestUser',
-  password : 'PassWord',
-  database : 'ninja_assignment2'
-  });
+  var d = new Date();
+  return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
-  var connectionQuery = 'SELECT * from tblEmployee WHERE EmpID =' + user_id;
-  connection.connect(function(err) {
-      connection.query(connectionQuery, function(err, result) {
-          if(err){
-              throw err;
-          } else {
-              var obj = {};
-              obj = {empData: result};
-              ejs.renderFile(__dirname + '/views/exportReport.ejs', obj, function(err, result) {
-                  // render on success
-                  if (result) {
-                      html = result;
-                      var options = {
-                          filename: 'pdf/empReport'+user_id+'.pdf',
-                          format: 'A4',
-                          orientation: 'portrait',
-                          directory: './pdf/',
-                          type: "pdf"
-                        };
-                      pdf.create(html,options).toFile(function(err, resPDF) {
-                            if (err)
-                            {
-                              return console.log("Error while creating PDF: " + err);
-                            }
-                            else
-                            {
-                              // do nothing - error will be caught in the above if loop
-                            }
-                          });
-                        }
-                  // render or error
-                  else {
-                     res.end('An error occurred');
-                     console.log(err);
-                  }
-              });
-          }
-      });
-  })
 }
-console.log("Running at Port 3000");
-module.exports = app;
+
+io.on('connection', function(socket){
+  //console.log('connected?')
+  socket.on('pdf_Report_Sharing', function(pdfName){
+      // hard-coded value to be removed
+      //var d = new Date();
+      io.emit('pdf_Report_Sharing', '<ul class="list-group">');
+      io.emit('pdf_Report_Sharing', emitMessage('New file is being created.'));
+     var mysql = require('mysql')
+     var connection = mysql.createConnection({
+     host     : 'ec2-35-178-213-196.eu-west-2.compute.amazonaws.com',
+     user     : 'TestUser',
+     password : 'PassWord',
+     database : 'ninja_assignment2'
+     });
+
+     var user_id = pdfName;
+   
+     var connectionQuery = 'SELECT * from tblEmployee WHERE EmpID =' + user_id;
+     connection.connect(function(err) {
+      io.emit('pdf_Report_Sharing', emitMessage('DB connected.'));
+      connection.query(connectionQuery, function(err, result) {
+             if(err){
+                 throw err;
+             } else {
+                 var obj = {};
+                 obj = {empData: result};
+                 ejs.renderFile(__dirname + '/views/exportReport.ejs', obj, function(err, result) {
+                  io.emit('pdf_Report_Sharing', emitMessage('PDF Data collected from databae.'));
+                  // render on success
+                     if (result) {
+                      html = result;
+                         var pdfFileName = 'pdf/empReport'+user_id+'.pdf';
+                         var options = {
+                             filename: pdfFileName,
+                             format: 'A4',
+                             orientation: 'portrait',
+                             directory: './pdf/',
+                             type: "pdf"
+                           };
+                           pdf.create(html,options).toFile(function(err, resPDF) {
+                            if (err)
+                              io.emit('pdf_Report_Sharing', emitMessage('Error while creating PDF: ' + err));
+                            else
+                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/' + pdfFileName + '" target="new">' + pdfFileName + '</a> is now ready to download.'));
+                             });
+                           }
+                     // render or error
+                     else {
+                      io.emit('pdf_Report_Sharing', emitMessage('An error occurred'));
+                      res.end('An error occurred');
+                     }
+                 });
+             }
+         });
+     })
+     io.emit('pdf_Report_Sharing', '</ul>');
+  });
+});
+
+function emitMessage(msg)
+{
+  return '<li class="list-group-item">' + currentTime() + ' - ' + msg + '</li>'
+}
+
+
+server.listen(port, function(){
+  console.log('listening on *:' + port);
+});

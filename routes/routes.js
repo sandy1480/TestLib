@@ -2,16 +2,15 @@
 var express = require('express');
 var router = express.Router();
 var db = require('./../db');
-
+  
 // home page
 router.get('/',function(req,res){
     res.render(__dirname + './../views/index.ejs');
 });
 
-// retrieve list of users
-router.get('/users',function(req,res){
-    res.render(__dirname + './../views/users');
-});
+router.get('/sharedReports', function(req, res){
+    res.render(__dirname + './../views/sharedReports.ejs');
+  });
 
 // retrieve available reports
 router.get('/availableReports',function(req,res){
