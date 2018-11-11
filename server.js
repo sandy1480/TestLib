@@ -31,7 +31,7 @@ function currentTime()
 }
 
 io.on('connection', function(socket){
-  console.log('connected?')
+  //console.log('connected?')
   socket.on('pdf_Report_Sharing', function(pdfName){
       // hard-coded value to be removed
       //var d = new Date();
@@ -73,7 +73,7 @@ io.on('connection', function(socket){
                             if (err)
                               io.emit('pdf_Report_Sharing', emitMessage('Error while creating PDF: ' + err));
                             else
-                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/' + pdfFileName + '" target="new">' + pdfFileName + '</a> is now ready to download.'));
+                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/' + pdfFileName + '" target="_blank" type="application/octet-stream" download>' + pdfFileName + '</a> is now ready to download.'));
                              });
                            }
                      // render or error
