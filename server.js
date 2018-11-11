@@ -73,7 +73,7 @@ io.on('connection', function(socket){
                             if (err)
                               io.emit('pdf_Report_Sharing', emitMessage('Error while creating PDF: ' + err));
                             else
-                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/' + pdfFileName + '" target="_blank" type="application/octet-stream" download>' + pdfFileName + '</a> is now ready to download.'));
+                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/downloadReport?url=/' + pdfFileName + '" target="_blank">' + pdfFileName + '</a> is now ready to download.'));
                              });
                            }
                      // render or error
@@ -88,6 +88,19 @@ io.on('connection', function(socket){
      io.emit('pdf_Report_Sharing', '</ul>');
   });
 });
+
+var download = function(url, dest, cb) {
+  var file = fs.createWriteStream(dest);
+  var request = http.get(url, function(response) {
+    response.pipe(file);
+    file.on('finish', function() {
+      file.close(cb);  // close() is async, call cb after close completes.
+    });
+  }).on('error', function(err) { // Handle errors
+    fs.unlink(dest); // Delete the file async. (But we don't check the result)
+    if (cb) cb(err.message);
+  });
+};
 
 function emitMessage(msg)
 {

@@ -8,9 +8,18 @@ router.get('/',function(req,res){
     res.render(__dirname + './../views/index.ejs');
 });
 
+// download pdf
+router.get('/downloadReport',function(req,res){
+    var url = require('url');
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    var pdfPath = req.query.url;
+    res.download(__dirname + './..' + pdfPath);
+});
+
 router.get('/sharedReports', function(req, res){
     res.render(__dirname + './../views/sharedReports.ejs');
-  });
+});
 
 // retrieve available reports
 router.get('/availableReports',function(req,res){
