@@ -73,7 +73,7 @@ io.on('connection', function(socket){
                             if (err)
                               io.emit('pdf_Report_Sharing', emitMessage('Error while creating PDF: ' + err));
                             else
-                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/downloadReport?url=/' + pdfFileName + '" target="_blank">' + pdfFileName + '</a> is now ready to download.'));
+                              io.emit('pdf_Report_Sharing', emitMessage('<a href="/downloadReport?url=/' + pdfFileName + '">' + pdfFileName + '</a> is now ready to download.'));
                              });
                            }
                      // render or error
