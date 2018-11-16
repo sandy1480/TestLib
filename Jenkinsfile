@@ -40,6 +40,6 @@ node {
     }
     
     stage('***RUN Docker Container***'){
-        docker.image("sandy1480/docker-test:${env.BUILD_ID}").withRun('-d -p 3000:3000')
+        app.run('-d -p 3000:3000')
     }
 }
