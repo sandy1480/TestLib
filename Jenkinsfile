@@ -40,6 +40,6 @@ node {
     }
     
     stage('***Run Docker Container***'){
-        app.run('-p -it 3000:3000 --name MyApp')
+        app.run('-it -p 3000:3000 --name MyApp')
     }
 }
