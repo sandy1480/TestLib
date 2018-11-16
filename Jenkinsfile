@@ -33,5 +33,13 @@ node {
         docker.withRegistry('', 'docker-hub-credentials') {
             app.push()
         }
-    }    
+    } 
+    stage('***Pull Image from Docker Hub***'){
+        def imageApp = docker.image("sandy1480/docker-test:${env.BUILD_ID}")
+        imageApp.pull()
+    }
+    
+    stage('***RUN Docker Container***'){
+        docker.image('sandy1480/docker-test:${env.BUILD_ID}').run(' -d -p 3000:3000 -i -t --name MyAppTest')
+    }
 }
