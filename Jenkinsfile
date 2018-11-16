@@ -39,7 +39,7 @@ node {
         imageApp.pull()
     }
     
-    stage('***RUN Docker Container***'){
+    stage('***Run Docker Container***'){
         app.run('-p 3000:3000 --name MyApp')
     }
 }
