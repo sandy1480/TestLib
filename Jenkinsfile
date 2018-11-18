@@ -34,7 +34,7 @@ node {
             app.push()
         }
     } 
-    stage('***Pull Image from Docker Hub***'){
+    stage('***Pull Image From Docker Hub***'){
         def imageApp = docker.image("sandy1480/docker-test:${env.BUILD_ID}")
         imageApp.pull()
     }
